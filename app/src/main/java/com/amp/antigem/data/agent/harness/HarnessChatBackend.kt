@@ -67,15 +67,35 @@ class HarnessChatBackend(
         transcript.clear()
         transcript.sessionId = id
         _messages.value = emptyList()
-        store.setCurrentConversation(conv)
+        store.currentConversation.value = conv
         _conversations.value = listOf(conv) + _conversations.value.filter { it.id != id }
     }
 
     override fun selectConversation(id: String) {
         val conv = _conversations.value.find { it.id == id } ?: return
-        store.setCurrentConversation(conv)
+        store.currentConversation.value = conv
         transcript.sessionId = id
         _messages.value = transcript.toChatMessages()
+    }
+
+    fun renameConversation(id: String, title: String) {
+        val clean = title.trim()
+        if (clean.isBlank()) return
+        _conversations.value = _conversations.value.map {
+            if (it.id == id) it.copy(title = clean) else it
+        }
+        store.currentConversation.value?.let {
+            if (it.id == id) store.currentConversation.value = it.copy(title = clean)
+        }
+    }
+
+    fun setArchived(id: String, archived: Boolean) {
+        _conversations.value = _conversations.value.map {
+            if (it.id == id) it.copy(archived = archived) else it
+        }
+        store.currentConversation.value?.let {
+            if (it.id == id) store.currentConversation.value = it.copy(archived = archived)
+        }
     }
 
     override fun sendMessage(content: String) {

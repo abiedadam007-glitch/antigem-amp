@@ -1,8 +1,6 @@
 package com.amp.antigem.data.agent.harness
 
 import com.amp.antigem.data.agent.opencode.bool
-import com.amp.antigem.data.agent.opencode.long
-import com.amp.antigem.data.agent.opencode.o
 import com.amp.antigem.data.agent.opencode.obj
 import com.amp.antigem.data.agent.opencode.str
 import com.amp.antigem.data.preferences.AuthPreferences
@@ -44,21 +42,16 @@ data class HarnessStatus(
     val logs: List<String>? = null
 )
 
-class HarnessBridgeClient {
-    private val http = okhttp3.OkHttpClient.Builder()
-        .connectTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
-        .build()
+class HarnessBridgeClient(private val bridge: AgyBridgeService = AgyBridgeService.instance) {
+    private val http by lazy { bridge.client.newBuilder().readTimeout(60, TimeUnit.SECONDS).build() }
 
-    private fun baseUrl(): String = "http://127.0.0.1:${AgyBridgeService.activePort}/api/harness"
+    private fun baseUrl(): String = AuthPreferences.currentBridgeHttpUrl.trimEnd('/') + "/api/harness"
 
-    private fun wsUrl(): String = "ws://127.0.0.1:${AgyBridgeService.activePort}/api/harness/ws"
+    private fun wsUrl(): String = baseUrl().replaceFirst("http", "ws") + "/ws"
 
     suspend fun status(): HarnessStatus = withContext(Dispatchers.IO) {
         val req = Request.Builder()
             .url("${baseUrl()}/status")
-            .header("X-CSRF-Token", AuthPreferences.csrfToken)
             .get()
             .build()
         http.newCall(req).execute().use { resp ->
@@ -71,7 +64,6 @@ class HarnessBridgeClient {
     suspend fun start(): Boolean = withContext(Dispatchers.IO) {
         val req = Request.Builder()
             .url("${baseUrl()}/start")
-            .header("X-CSRF-Token", AuthPreferences.csrfToken)
             .post("{}".toRequestBody("application/json".toMediaType()))
             .build()
         http.newCall(req).execute().use { it.isSuccessful }
@@ -85,12 +77,11 @@ class HarnessBridgeClient {
         }
         val req = Request.Builder()
             .url("${baseUrl()}/rpc")
-            .header("X-CSRF-Token", AuthPreferences.csrfToken)
             .post(payload.toString().toRequestBody("application/json".toMediaType()))
             .build()
         http.newCall(req).execute().use { resp ->
             val raw = resp.body?.string().orEmpty()
-            val obj = HarnessJson.parseToJsonElement(raw).obj
+            val obj = HarnessJson.parseToJsonElement(raw).obj() ?: error("bad answer from server")
             val success = obj.bool("success") ?: false
             if (!success) {
                 val err = obj.str("error") ?: "RPC call failed"
@@ -104,7 +95,6 @@ class HarnessBridgeClient {
         val url = "${wsUrl()}?since=$sinceSeq"
         val req = Request.Builder()
             .url(url)
-            .header("X-CSRF-Token", AuthPreferences.csrfToken)
             .build()
 
         val listener = object : WebSocketListener() {
@@ -121,7 +111,7 @@ class HarnessBridgeClient {
             }
         }
 
-        val ws = http.newWebSocket(req, listener)
+        val ws = bridge.wsClient.newWebSocket(req, listener)
         awaitClose { ws.cancel() }
     }.buffer(Channel.BUFFERED)
 }

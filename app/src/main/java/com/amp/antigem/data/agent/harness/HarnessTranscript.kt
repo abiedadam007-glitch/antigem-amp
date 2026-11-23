@@ -41,9 +41,9 @@ class HarnessTranscript(var sessionId: String = "") {
                 conversationId = sessionId,
                 role = turn.role,
                 content = turn.content,
-                thinking = turn.reasoning,
+                thoughtText = turn.reasoning,
                 toolCalls = turn.toolCalls.toList(),
-                createdAt = java.time.Instant.ofEpochMilli(turn.createdAt),
+                createdAt = turn.createdAt,
                 isStreaming = turn.isStreaming
             )
         }

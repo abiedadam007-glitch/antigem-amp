@@ -261,7 +261,7 @@ class MainActivity : ComponentActivity() {
                 androidx.compose.ui.platform.LocalLayoutDirection provides (if (isRtl) androidx.compose.ui.unit.LayoutDirection.Rtl else androidx.compose.ui.unit.LayoutDirection.Ltr)
             ) {
                 GeminiTheme(darkTheme = useDarkTheme) {
-                Surface(
+                    Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
@@ -715,6 +715,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
 
 
     override fun onResume() {
@@ -850,7 +851,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
             uri != null -> chatViewModel.openFileInIdeDirectly(this, uri)
         }
     }
