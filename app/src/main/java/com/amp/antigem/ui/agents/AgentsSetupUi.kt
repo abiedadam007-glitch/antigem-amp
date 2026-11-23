@@ -74,6 +74,11 @@ private val AGENT_OPTIONS = listOf(
         AgentKind.CODEX,
         "Codex",
         "OpenAI's Codex CLI on this device: sign in with your ChatGPT account (or an API key)."
+    ),
+    AgentOption(
+        AgentKind.HARNESS,
+        "DeepSeek Harness",
+        "DeepSeek's autonomous coding harness on this device: DeepSeek V3, R1, and coder models via ACP."
     )
 )
 

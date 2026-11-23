@@ -1657,17 +1657,19 @@ private fun ChatHistoryItemRow(
                 val isClaudeChat = conv.agent == com.amp.antigem.domain.model.AgentKind.CLAUDE
                 val isOpenCodeChat = conv.agent == com.amp.antigem.domain.model.AgentKind.OPENCODE
                 val isCodexChat = conv.agent == com.amp.antigem.domain.model.AgentKind.CODEX
+                val isHarnessChat = conv.agent == com.amp.antigem.domain.model.AgentKind.HARNESS
                 if (isJarvis) {
                     com.amp.antigem.ui.jarvis.JarvisBotIcon(19.dp, com.amp.antigem.ui.jarvis.Cyan.copy(alpha = if (isSelected) 1f else 0.85f))
                 } else Icon(
                     // an Antigravity cloud chat (Remote Agents) shows a cloud
                     imageVector = if (conv.isCloud) Icons.Outlined.Cloud else Icons.Outlined.ChatBubbleOutline,
-                    contentDescription = if (conv.isCloud) "Cloud chat" else if (isClaudeChat) "Claude Code chat" else if (isOpenCodeChat) "OpenCode chat" else if (isCodexChat) "Codex chat" else null,
+                    contentDescription = if (conv.isCloud) "Cloud chat" else if (isClaudeChat) "Claude Code chat" else if (isOpenCodeChat) "OpenCode chat" else if (isCodexChat) "Codex chat" else if (isHarnessChat) "DeepSeek Harness chat" else null,
                     tint = when {
                         conv.isCloud -> com.amp.antigem.theme.GeminiBlue.copy(alpha = if (isSelected) 1f else 0.85f)
                         isClaudeChat -> com.amp.antigem.ui.components.ClaudeAccent.copy(alpha = if (isSelected) 1f else 0.85f)
                         isOpenCodeChat -> com.amp.antigem.ui.components.OpenCodeAccent.copy(alpha = if (isSelected) 1f else 0.85f)
                         isCodexChat -> com.amp.antigem.ui.components.CodexAccent.copy(alpha = if (isSelected) 1f else 0.85f)
+                        isHarnessChat -> com.amp.antigem.ui.components.HarnessAccent.copy(alpha = if (isSelected) 1f else 0.85f)
                         isSelected -> ClaudeTerracotta
                         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     },

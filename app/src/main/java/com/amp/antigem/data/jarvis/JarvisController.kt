@@ -558,6 +558,7 @@ object JarvisController {
         AgentKind.AGY -> "Antigravity"
         AgentKind.OPENCODE -> "OpenCode"
         AgentKind.CODEX -> "Codex"
+        AgentKind.HARNESS -> "DeepSeek Harness"
         null -> "the agent"
     }
 
@@ -1566,6 +1567,7 @@ object JarvisController {
                 AgentKind.AGY -> sendAgy(prompt)
                 AgentKind.OPENCODE -> sendOpenCode(prompt)
                 AgentKind.CODEX -> sendCodex(prompt)
+                AgentKind.HARNESS -> sendAgy(prompt)
             }
         } catch (e: Exception) {
             // the saved Jarvis chat was deleted: start a new one and send this message there (once)
@@ -1761,6 +1763,8 @@ object JarvisController {
             "AGY has no separate effort: each thinking level is its own model. Pick that model with model / jarvis_set_model (see jarvis_list_models)."))
         AgentKind.OPENCODE -> Result.failure(IllegalArgumentException(
             "OpenCode chats have no effort setting in the app. Pick the model with model / jarvis_set_model."))
+        AgentKind.HARNESS -> Result.failure(IllegalArgumentException(
+            "DeepSeek Harness chats use the model configured in Harness Settings."))
     }
 
     /**
@@ -1797,7 +1801,7 @@ object JarvisController {
                 if (chosen !in levels) return "This chat's model supports these efforts: ${levels.joinToString()} (or default)."
                 b.selectEffort(chosen)
             }
-            AgentKind.AGY, AgentKind.OPENCODE -> return effortLevelsFor(kind, null).exceptionOrNull()?.message
+            AgentKind.AGY, AgentKind.OPENCODE, AgentKind.HARNESS -> return effortLevelsFor(kind, null).exceptionOrNull()?.message
         }
         return null
     }
@@ -1830,6 +1834,9 @@ object JarvisController {
                 JarvisTasks.codexBackendOf(id) != null -> JarvisTasks.codexBackendOf(id)!!.selectModel(modelId)
                 else -> vm.codexBackend.switchModelOf(id, modelId).getOrThrow()
             }
+            AgentKind.HARNESS -> {
+                // Harness model selection is managed via HarnessPreferences
+            }
         }
     }
 
@@ -1852,6 +1859,7 @@ object JarvisController {
             AgentKind.AGY -> hub.cancelCascadeInvocation(id).fold({ "Stopped." }, { "Could not stop: ${it.message}" })
             AgentKind.OPENCODE -> vm.openCodeBackend.interrupt(id).fold({ "Stopped." }, { "Could not stop: ${it.message}" })
             AgentKind.CODEX -> vm.codexBackend.interrupt(id).fold({ "Stopped." }, { "Could not stop: ${it.message}" })
+            AgentKind.HARNESS -> { vm.harnessBackend.stopStreaming(); "Stopped." }
         }
     }
 
@@ -1868,6 +1876,7 @@ object JarvisController {
                 AgentKind.CLAUDE -> vm.claudeBackend.loadMessages(id)
                 AgentKind.OPENCODE -> vm.openCodeBackend.loadMessages(id)
                 AgentKind.CODEX -> vm.codexBackend.loadMessages(id)
+                AgentKind.HARNESS -> vm.harnessBackend.messages.value
                 AgentKind.AGY -> {
                     val steps = hub.getCascadeTrajectorySteps(id).getOrNull().orEmpty()
                     com.amp.antigem.domain.chat.TrajectoryEngine().ingestStepsDirect(steps, id)
@@ -1876,7 +1885,7 @@ object JarvisController {
         }.getOrDefault(emptyList())
         knownAgentOf(id)?.let { return load(it) }
         // in no list yet (just created, list not refreshed): try every agent instead of guessing one
-        for (a in listOf(AgentKind.CLAUDE, AgentKind.OPENCODE, AgentKind.CODEX, AgentKind.AGY)) load(a).takeIf { it.isNotEmpty() }?.let { return it }
+        for (a in listOf(AgentKind.CLAUDE, AgentKind.OPENCODE, AgentKind.CODEX, AgentKind.HARNESS, AgentKind.AGY)) load(a).takeIf { it.isNotEmpty() }?.let { return it }
         return emptyList()
     }
 

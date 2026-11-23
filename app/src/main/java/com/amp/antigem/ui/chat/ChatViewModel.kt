@@ -910,6 +910,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         AgentKind.CLAUDE -> claudeBackend
         AgentKind.OPENCODE -> openCodeBackend
         AgentKind.CODEX -> codexBackend
+        AgentKind.HARNESS -> harnessBackend
         else -> agyBackend
     }
 
@@ -1671,6 +1672,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     AgentKind.CODEX -> codexBackend.refreshSkills()
                     AgentKind.AGY -> com.amp.antigem.data.remote.SlashCommandsCache.refresh()
                     AgentKind.OPENCODE -> openCodeBackend.refreshSlashCommands()
+                    AgentKind.HARNESS -> { /* Harness uses local skills directory */ }
                 }
             }
         }

@@ -106,6 +106,7 @@ fun JarvisSettingsScreen(cardBg: Color, cardBorder: BorderStroke, onOpen: (Jarvi
                     AgentKind.CLAUDE.name -> "Claude Code"
                     AgentKind.OPENCODE.name -> "OpenCode"
                     AgentKind.CODEX.name -> "Codex"
+                    AgentKind.HARNESS.name -> "DeepSeek Harness"
                     else -> "Not set"
                 }),
                 row(JarvisSettingsPage.PERSONALITY, I.Face, c.accentPink, "Personality & you"),
@@ -153,6 +154,7 @@ fun JarvisSettingsSectionPage(page: JarvisSettingsPage, cardBg: Color, cardBorde
         AgentKind.AGY -> "Antigravity"
         AgentKind.OPENCODE -> "OpenCode"
         AgentKind.CODEX -> "Codex"
+        AgentKind.HARNESS -> "DeepSeek Harness"
         null -> "the agent"
     }
 
@@ -170,7 +172,7 @@ fun JarvisSettingsSectionPage(page: JarvisSettingsPage, cardBg: Color, cardBorde
                 JCard(cardBg, cardBorder, "") {
                     val enabledAgents by vm.enabledAgents.collectAsState()
                     JChips(
-                        listOf(AgentKind.CLAUDE.name to "Claude Code", AgentKind.AGY.name to "Antigravity", AgentKind.OPENCODE.name to "OpenCode", AgentKind.CODEX.name to "Codex"),
+                        listOf(AgentKind.CLAUDE.name to "Claude Code", AgentKind.AGY.name to "Antigravity", AgentKind.OPENCODE.name to "OpenCode", AgentKind.CODEX.name to "Codex", AgentKind.HARNESS.name to "DeepSeek Harness"),
                         agentName
                     ) { P.agent.set(it); P.modelId.set("") }
                     if (agent == null) {
@@ -260,7 +262,7 @@ fun JarvisSettingsSectionPage(page: JarvisSettingsPage, cardBg: Color, cardBorde
                         }
                         val mcpState = when (agent) {
                             AgentKind.CLAUDE -> claudeServers.firstOrNull { it.name == name }?.status
-                            AgentKind.OPENCODE, AgentKind.CODEX -> null
+                            AgentKind.OPENCODE, AgentKind.CODEX, AgentKind.HARNESS -> null
                             else -> agyServers.firstOrNull { it.name == name }?.status
                         }
                         val mcpAdded = when (agent) {

@@ -591,29 +591,18 @@ fun SettingsDialog(
                         onOpenReaGroups = { currentSection = SettingsSection.REA_GROUPS }
                     )
 
-                    SettingsSection.SKILLS_PLUGINS -> SkillsAndPluginsSubScreen(
-                        skills = allSkills,
-                        isSkillsLoading = isSkillsLoading,
-                        skillsFilterScope = skillsFilterScope,
-                        onSetSkillsFilterScope = onSetSkillsFilterScope,
-                        onRefreshSkills = onRefreshSkills,
-                        installedPlugins = installedPlugins,
-                        isInstalledPluginsLoading = isInstalledPluginsLoading,
-                        onRefreshInstalledPlugins = onRefreshInstalledPlugins,
-                        googlePlugins = googlePluginsCatalog,
-                        isGooglePluginsLoading = isGooglePluginsLoading,
-                        installingGooglePluginId = installingGooglePluginId,
-                        deletingPluginId = deletingPluginId,
-                        onRefreshGooglePlugins = onRefreshGooglePlugins,
-                        onInstallGooglePlugin = onInstallGooglePlugin,
-                        onDeletePlugin = onDeletePlugin,
-                        statusMessage = pluginActionStatusMessage,
-                        errorMessage = pluginActionErrorMessage,
-                        onClearStatus = onClearPluginStatus,
-                        cardBg = cardBg,
-                        cardBorder = cardBorder
+                    SettingsSection.SKILLS_PLUGINS -> com.amp.antigem.ui.marketplace.MarketplaceScreen(
+                        onNavigateBack = { currentSection = SettingsSection.MAIN }
                     )
 
+                    SettingsSection.LANGUAGE -> LanguageSubScreen(
+                        context = context,
+                        onNavigateBack = { currentSection = SettingsSection.MAIN }
+                    )
+
+                    SettingsSection.HARNESS -> HarnessSubScreen(
+                        onNavigateBack = { currentSection = SettingsSection.MAIN }
+                    )
 
                     SettingsSection.TERMINAL -> TerminalSubScreen(
                         useSshTerminal = useSshTerminal,
@@ -953,6 +942,12 @@ private fun MainSettingsMenu(
             listOf(
                 row(SettingsSection.THEMES, Icons.Outlined.Palette, c.accentPink, com.amp.antigem.theme.ThemeManager.current.name),
                 row(SettingsSection.APPEARANCE, Icons.Outlined.Tune, c.accentAlt),
+                row(SettingsSection.LANGUAGE, Icons.Outlined.Language, c.accentTeal,
+                    when (com.amp.antigem.data.preferences.AppLanguageManager.currentLanguage.value) {
+                        "ar" -> "العربية"
+                        "en" -> "English"
+                        else -> "تلقائي · System"
+                    }),
                 stemRow,
                 // where agents run (Termux, Ubuntu chroot or a server), and whether the app reaches it
                 row(SettingsSection.SERVERS, Icons.Outlined.Dns, c.info,
@@ -974,11 +969,13 @@ private fun MainSettingsMenu(
                                 com.amp.antigem.domain.model.AgentKind.CLAUDE -> "Claude"
                                 com.amp.antigem.domain.model.AgentKind.OPENCODE -> "OpenCode"
                                 com.amp.antigem.domain.model.AgentKind.CODEX -> "Codex"
+                                com.amp.antigem.domain.model.AgentKind.HARNESS -> "Harness"
                             }
                         }
                     claudeOn -> "Claude Code"
                     openCodeOn -> "OpenCode"
                     codexOn -> "Codex"
+                    harnessOn -> "DeepSeek Harness"
                     else -> "Antigravity"
                 }),
                 if (agyOn) row(SettingsSection.ANTIGRAVITY, Icons.Outlined.RocketLaunch, GeminiBlue,
@@ -9271,5 +9268,270 @@ private fun AboutSubScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LanguageSubScreen(
+    context: Context,
+    onNavigateBack: () -> Unit
+) {
+    val currentLang by com.amp.antigem.data.preferences.AppLanguageManager.currentLanguage.collectAsState()
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "اختر لغة التطبيق / Select Application Language",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        Text(
+            text = "يمكنك التبديل بين الواجهة العربية (RTL) والإنجليزية (LTR) في أي وقت.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        val options = listOf(
+            Triple("", "تلقائي (لغة النظام)", "System Default"),
+            Triple("ar", "العربية", "Arabic (Right-to-Left)"),
+            Triple("en", "English", "English (Left-to-Right)")
+        )
+
+        options.forEach { (code, titleAr, titleEn) ->
+            val isSelected = currentLang == code
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        com.amp.antigem.data.preferences.AppLanguageManager.setLanguage(context, code)
+                    },
+                shape = RoundedCornerShape(12.dp),
+                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                border = BorderStroke(
+                    width = if (isSelected) 1.5.dp else 1.dp,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = titleAr,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            fontSize = 15.sp,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = titleEn,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = {
+                            com.amp.antigem.data.preferences.AppLanguageManager.setLanguage(context, code)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HarnessSubScreen(
+    onNavigateBack: () -> Unit
+) {
+    val context = LocalContext.current
+    val prefs = remember { com.amp.antigem.data.agent.harness.HarnessPreferences(context) }
+    val selectedModel by prefs.model.collectAsState()
+    val selectedProfile by prefs.profile.collectAsState()
+    val apiKey by prefs.apiKey.collectAsState()
+    var apiKeyInput by remember(apiKey) { mutableStateOf(apiKey) }
+    var apiKeyVisible by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Banner card
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            color = com.amp.antigem.ui.components.HarnessAccent.copy(alpha = 0.1f),
+            border = BorderStroke(1.dp, com.amp.antigem.ui.components.HarnessAccent.copy(alpha = 0.3f))
+        ) {
+            Row(
+                modifier = Modifier.padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(text = "🐋", fontSize = 28.sp)
+                Column {
+                    Text(
+                        text = "DeepSeek Harness",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Autonomous AI coding harness powered by DeepSeek models via ACP (Agent Client Protocol)",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+
+        // Section: Model Selection
+        Text(
+            text = "النموذج المفضل · Model",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        com.amp.antigem.data.agent.harness.HarnessPreferences.AVAILABLE_MODELS.forEach { (modelId, modelName) ->
+            val isSelected = selectedModel == modelId
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { prefs.setModel(modelId) },
+                shape = RoundedCornerShape(10.dp),
+                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                border = BorderStroke(
+                    if (isSelected) 1.5.dp else 1.dp,
+                    if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = modelName,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = modelId,
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = { prefs.setModel(modelId) }
+                    )
+                }
+            }
+        }
+
+        // Section: API Key
+        Text(
+            text = "مفتاح API · DeepSeek API Key",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        OutlinedTextField(
+            value = apiKeyInput,
+            onValueChange = {
+                apiKeyInput = it
+                prefs.setApiKey(it)
+            },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("DeepSeek API Key (sk-...)") },
+            placeholder = { Text("Enter your DeepSeek API key") },
+            singleLine = true,
+            visualTransformation = if (apiKeyVisible) androidx.compose.ui.text.input.VisualTransformation.None
+                                   else androidx.compose.ui.text.input.PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { apiKeyVisible = !apiKeyVisible }) {
+                    Icon(
+                        imageVector = if (apiKeyVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                        contentDescription = if (apiKeyVisible) "Hide key" else "Show key"
+                    )
+                }
+            },
+            shape = RoundedCornerShape(10.dp)
+        )
+
+        // Section: Profile
+        Text(
+            text = "وضع التشغيل · Profile",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        val profiles = listOf(
+            "acp" to "ACP (Agent Client Protocol - Recommended)",
+            "headless" to "Headless / Non-interactive CLI",
+            "web" to "Web Profile (Browser Automation)"
+        )
+
+        profiles.forEach { (profId, profName) ->
+            val isSelected = selectedProfile == profId
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { prefs.setProfile(profId) },
+                shape = RoundedCornerShape(10.dp),
+                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
+                        else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                border = BorderStroke(
+                    if (isSelected) 1.5.dp else 1.dp,
+                    if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+                )
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = profName,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = { prefs.setProfile(profId) }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

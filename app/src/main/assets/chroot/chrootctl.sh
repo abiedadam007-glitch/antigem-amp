@@ -833,7 +833,7 @@ cmd_backup() {
             echo "./.antigem"
             echo "./home/*"
             for f in .bash_history .lesshst .viminfo .python_history .node_repl_history .wget-hsts .sudo_as_admin_successful \
-                .cache .local .config .npm .ssh .gnupg .claude .claude.json .codex .gemini .opencode .antigem .agy; do echo "./root/$f"; done
+                .cache .local .config .npm .ssh .gnupg .claude .claude.json .codex .gemini .opencode .antigem .agy .dsh; do echo "./root/$f"; done
             echo "./var/lib/apt/lists/*"
             echo "./var/cache/apt/*"
             echo "./var/log/*.log"
