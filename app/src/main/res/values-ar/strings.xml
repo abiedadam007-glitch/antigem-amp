@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AntiGem</string>
+    <string name="anti_term_name">AntiTerm</string>
+    <string name="termux_name">Termux</string>
+    <string name="accessibility_service_name">أتمتة أندرويد لـ AntiGem</string>
+    <string name="accessibility_service_description">تتيح لوكلاء الذكاء الاصطناعي قراءة الشاشة، التقاط لقطات شاشة، النقر، التمرير، الكتابة وفتح التطبيقات على الهاتف عند طلب أدوات الأتمتة فقط.</string>
+    <string name="copy_text">نسخ</string>
+    <string name="paste_text">لصق</string>
+    <string name="text_selection_more">المزيد</string>
+    <string name="select_all">تحديد الكل</string>
+    <string name="share_text">مشاركة</string>
+    <string name="select_url">تحديد الرابط</string>
+    <string name="share_transcript">مشاركة المحادثة</string>
+    <string name="reset_terminal">إعادة تعيين الطرفية</string>
+    <string name="no_urls_found">لم يتم العثور على روابط</string>
+
+    <!-- General & Navigation -->
+    <string name="settings">الإعدادات</string>
+    <string name="language">اللغة</string>
+    <string name="language_ar">العربية</string>
+    <string name="language_en">English</string>
+    <string name="language_system">تلقائي (حسب النظام)</string>
+    <string name="new_chat">محادثة جديدة</string>
+    <string name="all_chats">كل المحادثات</string>
+    <string name="archived_chats">المحادثات المؤرشفة</string>
+
+    <!-- Marketplace & Plugins -->
+    <string name="plugins_title">المكونات الإضافية</string>
+    <string name="plugins_search_hint">بحث في المكونات الإضافية</string>
+    <string name="section_most_popular">الأكثر رواجًا</string>
+    <string name="section_new_noteworthy">الجديد والجدير بالاهتمام</string>
+    <string name="action_install">تثبيت</string>
+    <string name="action_installed">مثبت</string>
+    <string name="action_login_required">تسجيل الدخول مطلوب</string>
+    <string name="action_connect">ربط الحساب</string>
+
+    <!-- Agents -->
+    <string name="agent_harness">DeepSeek Harness</string>
+    <string name="agent_agy">Antigravity</string>
+    <string name="agent_claude">Claude Code</string>
+    <string name="agent_opencode">OpenCode</string>
+    <string name="agent_codex">Codex</string>
+</resources>

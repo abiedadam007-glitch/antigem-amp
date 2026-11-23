@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AntiGem</string>
     <string name="anti_term_name">AntiTerm</string>
@@ -13,4 +14,31 @@
     <string name="share_transcript">Share Transcript</string>
     <string name="reset_terminal">Reset Terminal</string>
     <string name="no_urls_found">No URLs found in transcript</string>
+
+    <!-- General & Navigation -->
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="language_ar">Arabic</string>
+    <string name="language_en">English</string>
+    <string name="language_system">System Default</string>
+    <string name="new_chat">New Chat</string>
+    <string name="all_chats">All Chats</string>
+    <string name="archived_chats">Archived Chats</string>
+
+    <!-- Marketplace & Plugins -->
+    <string name="plugins_title">Plugins &amp; Extensions</string>
+    <string name="plugins_search_hint">Search plugins and skills</string>
+    <string name="section_most_popular">Most Popular</string>
+    <string name="section_new_noteworthy">New &amp; Noteworthy</string>
+    <string name="action_install">Install</string>
+    <string name="action_installed">Installed</string>
+    <string name="action_login_required">Sign-in Required</string>
+    <string name="action_connect">Connect Account</string>
+
+    <!-- Agents -->
+    <string name="agent_harness">DeepSeek Harness</string>
+    <string name="agent_agy">Antigravity</string>
+    <string name="agent_claude">Claude Code</string>
+    <string name="agent_opencode">OpenCode</string>
+    <string name="agent_codex">Codex</string>
 </resources>

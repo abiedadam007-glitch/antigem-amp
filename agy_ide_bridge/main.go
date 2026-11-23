@@ -25,6 +25,7 @@ import (
 	"gemini-server/pkg/codex"
 	"gemini-server/pkg/config"
 	"gemini-server/pkg/handlers"
+	"gemini-server/pkg/harness"
 	"gemini-server/pkg/hub"
 	"gemini-server/pkg/memory"
 	"gemini-server/pkg/opencode"
@@ -47,6 +48,7 @@ Flags:
   --claude-bin <path>       Custom path to the Claude Code CLI (default: claude on PATH)
   --opencode-bin <path>     Custom path to the OpenCode CLI (default: opencode on PATH or ~/.opencode/bin)
   --codex-bin <path>        Custom path to the Codex CLI (default: codex on PATH or ~/.local/bin)
+  --harness-bin <path>      Custom path to DeepSeek Harness CLI (default: dsh on PATH or ~/.dsh/bin)
   -t, --token <token>       12-character security token for API & AGY CSRF obfuscation
   -f, --force, --f          Force start AGY Hub automatically without prompting
   -p, --port <port>         Port for the Go IDE Server (default: 1234)
@@ -58,6 +60,7 @@ Flags:
   --no-claude               Disable Claude Code (no /api/claude endpoints, never runs the claude CLI)
   --no-opencode             Disable OpenCode (no /api/opencode endpoints, never runs the opencode CLI)
   --no-codex                Disable Codex (no /api/codex endpoints, never runs the codex CLI)
+  --no-harness              Disable DeepSeek Harness (no /api/harness endpoints, never runs the dsh CLI)
   -d, --dir <path>          Custom workspace directory
   -h, --help                Show help documentation`)
 }
@@ -150,6 +153,8 @@ func main() {
 	var noOpenCode bool
 	var customCodexBin string
 	var noCodex bool
+	var customHarnessBin string
+	var noHarness bool
 	var forceStart bool
 	var skipHub bool
 	var cliToken string
@@ -208,6 +213,15 @@ func main() {
 			}
 		case arg == "--no-codex":
 			noCodex = true
+		case strings.HasPrefix(arg, "--harness-bin="):
+			customHarnessBin = strings.TrimPrefix(arg, "--harness-bin=")
+		case arg == "--harness-bin":
+			if i+1 < len(os.Args) {
+				customHarnessBin = os.Args[i+1]
+				i++
+			}
+		case arg == "--no-harness":
+			noHarness = true
 		case strings.HasPrefix(arg, "--port="):
 			cfg.Port = strings.TrimPrefix(arg, "--port=")
 		case arg == "-p" || arg == "--port":
@@ -379,6 +393,19 @@ func main() {
 	} else {
 		codexMgr = codex.NewManager(cfg.HomeDir, cfg.WorkspaceDir, customCodexBin)
 		mux.Handle("/api/codex/", codexMgr)
+	}
+
+	// DeepSeek Harness: one `dsh` runtime for all its chats; off with --no-harness
+	var harnessMgr *harness.Manager
+	if noHarness {
+		mux.HandleFunc("/api/harness/", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusServiceUnavailable)
+			_, _ = w.Write([]byte(`{"success":false,"disabled":true,"error":"DeepSeek Harness is turned off in the app"}`))
+		})
+	} else {
+		harnessMgr = harness.NewManager(cfg.HomeDir, cfg.WorkspaceDir, customHarnessBin)
+		mux.Handle("/api/harness/", harnessMgr)
 	}
 
 	// Project checkpoints: a hidden copy of the project before each chat message (any agent), restore with preview
@@ -734,6 +761,9 @@ func main() {
 	}
 	if codexMgr != nil {
 		codexMgr.StopAll()
+	}
+	if harnessMgr != nil {
+		harnessMgr.StopAll()
 	}
 	if hubMgr != nil {
 		hubMgr.Stop()
