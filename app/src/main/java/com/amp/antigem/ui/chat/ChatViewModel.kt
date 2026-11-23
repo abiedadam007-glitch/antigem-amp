@@ -730,6 +730,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             AgentKind.CLAUDE -> claudeBackend.renameConversation(id, title)
             AgentKind.OPENCODE -> openCodeBackend.renameConversation(id, title)
             AgentKind.CODEX -> codexBackend.renameConversation(id, title)
+            AgentKind.HARNESS -> harnessBackend.renameConversation(id, title)
             AgentKind.AGY -> agyBackend.renameConversation(id, title)
         }
     }
@@ -740,6 +741,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
             AgentKind.CLAUDE -> claudeBackend.setArchived(id, archived)
             AgentKind.OPENCODE -> openCodeBackend.setArchived(id, archived)
             AgentKind.CODEX -> codexBackend.setArchived(id, archived)
+            AgentKind.HARNESS -> harnessBackend.setArchived(id, archived)
             AgentKind.AGY -> agyBackend.setArchived(id, archived)
         }
     }

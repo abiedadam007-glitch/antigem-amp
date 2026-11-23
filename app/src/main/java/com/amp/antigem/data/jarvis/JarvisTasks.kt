@@ -253,6 +253,11 @@ object JarvisTasks {
                 scope.launch { delay(2500); runCatching { vm.agyBackend.syncAgyConversations(force = true) } }
                 id
             }
+            AgentKind.HARNESS -> {
+                val id = UUID.randomUUID().toString()
+                vm.harnessBackend.sendMessage(prompt)
+                id
+            }
         }
         val task = Task(
             id = id, agent = agent,
@@ -327,6 +332,9 @@ object JarvisTasks {
                     b.sendMessage(outgoing)
                 }
             }
+            AgentKind.HARNESS -> {
+                vm.harnessBackend.sendMessage(outgoing)
+            }
         }
         val now = System.currentTimeMillis()
         put(t.copy(state = State.STARTING, turnAt = now, updatedAt = now, progressAt = now, seenRunning = false,
@@ -345,6 +353,7 @@ object JarvisTasks {
             AgentKind.AGY -> hub.cancelCascadeInvocation(t.id).onFailure { return "Could not stop: ${it.message}" }
             AgentKind.OPENCODE -> (openCodeBackends[t.id] ?: vm.openCodeBackend).interrupt(t.id).onFailure { return "Could not stop: ${it.message}" }
             AgentKind.CODEX -> (codexBackends[t.id] ?: vm.codexBackend).interrupt(t.id).onFailure { return "Could not stop: ${it.message}" }
+            AgentKind.HARNESS -> vm.harnessBackend.stopStreaming()
         }
         if (!quiet) put(t.copy(state = State.STOPPED, updatedAt = System.currentTimeMillis(), note = "Stopped", reported = true))
         return "Stopped."
@@ -380,6 +389,7 @@ object JarvisTasks {
             AgentKind.CLAUDE -> claudeBackends[t.id]?.messages?.value?.takeIf { it.isNotEmpty() } ?: runCatching { JarvisController.readChat(t.id) }.getOrDefault(emptyList())
             AgentKind.OPENCODE -> openCodeBackends[t.id]?.messages?.value?.takeIf { it.isNotEmpty() } ?: runCatching { JarvisController.readChat(t.id) }.getOrDefault(emptyList())
             AgentKind.CODEX -> codexBackends[t.id]?.messages?.value?.takeIf { it.isNotEmpty() } ?: runCatching { JarvisController.readChat(t.id) }.getOrDefault(emptyList())
+            AgentKind.HARNESS -> vm.harnessBackend.messages.value
             AgentKind.AGY -> runCatching { JarvisController.readChat(t.id) }.getOrDefault(emptyList())
         }
         val text = msgs.lastOrNull { it.role == MessageRole.ASSISTANT && it.content.isNotBlank() }?.content.orEmpty()
@@ -470,6 +480,7 @@ object JarvisTasks {
         AgentKind.CODEX -> codexBackends[t.id]?.isCurrentChatActivelyRunning?.value == true ||
             (vm.currentConversation.value?.id == t.id && vm.codexBackend.isCurrentChatActivelyRunning.value) ||
             vm.codexBackend.conversations.value.any { it.id == t.id && it.isRunning }
+        AgentKind.HARNESS -> vm.harnessBackend.isStreaming.value
     }
 
     private fun agyBusy(id: String): Boolean {
@@ -543,6 +554,12 @@ object JarvisTasks {
                 error = b.conversationError.value ?: last?.takeIf { !running && it.role == MessageRole.ASSISTANT && it.content.contains("<!-- error -->") }
                     ?.let { m -> Regex("\"userMessage\":\"((?:[^\"\\\\]|\\\\.)*)\"").find(m.content)?.groupValues?.get(1) ?: "Codex failed" }
                 sig = "${msgs.size}:${last?.content?.length}:${last?.toolCalls?.size}:${last?.toolCalls?.lastOrNull()?.status}"
+            }
+            AgentKind.HARNESS -> {
+                running = vm.harnessBackend.isStreaming.value
+                val msgs = vm.harnessBackend.messages.value
+                val last = msgs.lastOrNull()
+                sig = "${msgs.size}:${last?.content?.length}"
             }
         }
         if (progressSig.put(t.id, sig) != sig) t = t.copy(progressAt = now)
