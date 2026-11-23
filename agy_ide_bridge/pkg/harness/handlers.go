@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 func writeJSON(w http.ResponseWriter, status int, data interface{}) {
