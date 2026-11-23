@@ -165,12 +165,15 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     private val alwaysFalse = MutableStateFlow(false)
 
     private fun <T> byAgent(agy: StateFlow<T>, claude: StateFlow<T>, openCode: StateFlow<T>, codex: StateFlow<T>, harness: StateFlow<T>? = null): StateFlow<T> =
-        combine(store.currentConversation, agy, claude, openCode, codex) { conv, a, c, o, x ->
+        combine(
+            combine(store.currentConversation, agy, claude, ::Triple),
+            combine(openCode, codex, harness ?: agy, ::Triple)
+        ) { (conv, a, c), (o, x, h) ->
             when (conv?.agent) {
                 AgentKind.CLAUDE -> c
                 AgentKind.OPENCODE -> o
                 AgentKind.CODEX -> x
-                AgentKind.HARNESS -> harness?.value ?: a
+                AgentKind.HARNESS -> h
                 else -> a
             }
         }.stateIn(viewModelScope, SharingStarted.Eagerly, agy.value)
@@ -847,12 +850,21 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _conversations = store.conversations
     /** Every conversation of the enabled agents, Jarvis' own chats included. */
-    val allConversations: StateFlow<List<Conversation>> = combine(_conversations, claudeBackend.conversations, openCodeBackend.conversations, codexBackend.conversations, harnessBackend.conversations, enabledAgents) { agy, claude, openCode, codex, harness, enabled ->
-        // a disabled agent's chats stay on disk but are not listed
-        ((if (AgentKind.AGY in enabled) agy else emptyList()) + (if (AgentKind.CLAUDE in enabled) claude else emptyList()) +
-            (if (AgentKind.OPENCODE in enabled) openCode else emptyList()) + (if (AgentKind.CODEX in enabled) codex else emptyList()) +
-            (if (AgentKind.HARNESS in enabled) harness else emptyList()))
-            .sortedByDescending { it.updatedAt }
+    val allConversations: StateFlow<List<Conversation>> = combine(
+        combine(_conversations, claudeBackend.conversations, openCodeBackend.conversations, codexBackend.conversations, harnessBackend.conversations) { agy, claude, openCode, codex, harness ->
+            listOf(
+                AgentKind.AGY to agy,
+                AgentKind.CLAUDE to claude,
+                AgentKind.OPENCODE to openCode,
+                AgentKind.CODEX to codex,
+                AgentKind.HARNESS to harness
+            )
+        },
+        enabledAgents
+    ) { agentLists, enabled ->
+        agentLists.flatMap { (agent, convs) ->
+            if (agent in enabled) convs else emptyList()
+        }.sortedByDescending { it.updatedAt }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**
