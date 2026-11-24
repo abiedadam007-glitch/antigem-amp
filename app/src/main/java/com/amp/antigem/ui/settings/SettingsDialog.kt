@@ -600,8 +600,8 @@ fun SettingsDialog(
                         onNavigateBack = { currentSection = SettingsSection.MAIN }
                     )
 
-                    SettingsSection.HARNESS -> HarnessSubScreen(
-                        onNavigateBack = { currentSection = SettingsSection.MAIN }
+                    SettingsSection.HARNESS -> com.amp.antigem.ui.harness.HarnessSettingsScreen(
+                        onBack = { currentSection = SettingsSection.MAIN }
                     )
 
                     SettingsSection.TERMINAL -> TerminalSubScreen(

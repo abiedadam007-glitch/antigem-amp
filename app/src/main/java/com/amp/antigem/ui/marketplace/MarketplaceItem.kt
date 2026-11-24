@@ -1,7 +1,6 @@
 package com.amp.antigem.ui.marketplace
 
 import android.content.Context
-import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,7 +24,16 @@ data class MarketplaceItem(
     val category: String = "general",
     val isInstalled: Boolean = false,
     val isPopular: Boolean = false,
-    val isNew: Boolean = false
+    val isNew: Boolean = false,
+    // New fields
+    val iconUrl: String? = null,
+    val screenshots: List<String> = emptyList(),
+    val developer: String = "",
+    val version: String = "1.0.0",
+    val tags: List<String> = emptyList(),
+    val installScript: String? = null,
+    val requiredPermissions: List<String> = emptyList(),
+    val homepage: String? = null
 )
 
 object MarketplaceRepository {
@@ -43,7 +51,12 @@ object MarketplaceRepository {
             authPrompt = "Google Account / OAuth Access Token",
             authHelpUrl = "https://myaccount.google.com/apppasswords",
             category = "mail",
-            isPopular = true
+            isPopular = true,
+            iconUrl = "https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",
+            developer = "Google",
+            tags = listOf("email", "google", "inbox"),
+            requiredPermissions = listOf("READ_EMAIL", "SEND_EMAIL"),
+            homepage = "https://mail.google.com"
         ),
         MarketplaceItem(
             id = "google_drive",
@@ -55,7 +68,12 @@ object MarketplaceRepository {
             authPrompt = "Google Drive Access Token",
             authHelpUrl = "https://console.cloud.google.com",
             category = "storage",
-            isPopular = true
+            isPopular = true,
+            iconUrl = "https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png",
+            developer = "Google",
+            tags = listOf("cloud", "files", "google"),
+            requiredPermissions = listOf("READ_FILES", "WRITE_FILES"),
+            homepage = "https://drive.google.com"
         ),
         MarketplaceItem(
             id = "remote_desktop",
@@ -66,7 +84,10 @@ object MarketplaceRepository {
             authType = MarketplaceAuthType.CREDENTIALS,
             authPrompt = "Host IP and Port (e.g. 192.168.1.50:5900)",
             category = "system",
-            isPopular = true
+            isPopular = true,
+            developer = "Antigem",
+            tags = listOf("remote", "desktop", "vnc"),
+            requiredPermissions = listOf("NETWORK_ACCESS")
         ),
         MarketplaceItem(
             id = "health",
@@ -76,7 +97,10 @@ object MarketplaceRepository {
             iconColor = 0xFFEF4444,
             authType = MarketplaceAuthType.NONE,
             category = "health",
-            isPopular = true
+            isPopular = true,
+            developer = "Antigem",
+            tags = listOf("health", "fitness", "wellness"),
+            requiredPermissions = listOf("READ_HEALTH_DATA")
         ),
         MarketplaceItem(
             id = "github",
@@ -84,11 +108,132 @@ object MarketplaceRepository {
             description = "Manage repos, pull requests and issues",
             iconEmoji = "🐙",
             iconColor = 0xFF24292F,
-            authType = MarketplaceAuthType.API_KEY,
-            authPrompt = "GitHub Personal Access Token (PAT)",
-            authHelpUrl = "https://github.com/settings/tokens",
+            authType = MarketplaceAuthType.OAUTH,
+            authPrompt = "Connect your GitHub account via OAuth to grant access to repos and issues",
+            authHelpUrl = "https://github.com/settings/applications",
             category = "dev",
-            isPopular = true
+            isPopular = true,
+            iconUrl = "https://github.githubassets.com/favicons/favicon.svg",
+            developer = "GitHub, Inc.",
+            tags = listOf("git", "code", "repos", "PRs"),
+            requiredPermissions = listOf("READ_REPOS", "WRITE_REPOS", "READ_USER"),
+            homepage = "https://github.com"
+        ),
+        MarketplaceItem(
+            id = "slack",
+            name = "Slack",
+            description = "Send messages, search channels and manage workspace",
+            iconEmoji = "💬",
+            iconColor = 0xFF4A154B,
+            authType = MarketplaceAuthType.OAUTH,
+            authPrompt = "Connect your Slack workspace via OAuth",
+            authHelpUrl = "https://api.slack.com/apps",
+            category = "communication",
+            isPopular = true,
+            iconUrl = "https://a.slack-edge.com/80588/marketing/img/icons/icon_slack_hash_colored.png",
+            developer = "Slack Technologies",
+            tags = listOf("messaging", "teams", "workspace"),
+            requiredPermissions = listOf("READ_MESSAGES", "SEND_MESSAGES"),
+            homepage = "https://slack.com"
+        ),
+        MarketplaceItem(
+            id = "notion",
+            name = "Notion",
+            description = "Read, write and manage Notion pages and databases",
+            iconEmoji = "📝",
+            iconColor = 0xFF000000,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Notion Integration Secret Key",
+            authHelpUrl = "https://www.notion.so/my-integrations",
+            category = "productivity",
+            isPopular = true,
+            iconUrl = "https://www.notion.so/images/logo-ios.png",
+            developer = "Notion Labs",
+            tags = listOf("notes", "docs", "database"),
+            requiredPermissions = listOf("READ_PAGES", "WRITE_PAGES"),
+            homepage = "https://notion.so"
+        ),
+        MarketplaceItem(
+            id = "linear",
+            name = "Linear",
+            description = "Manage issues, projects and sprints in Linear",
+            iconEmoji = "📊",
+            iconColor = 0xFF5E6AD2,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Linear API Key",
+            authHelpUrl = "https://linear.app/settings/api",
+            category = "project",
+            isPopular = true,
+            iconUrl = "https://linear.app/static/linear-logo.svg",
+            developer = "Linear",
+            tags = listOf("issues", "project", "sprint"),
+            requiredPermissions = listOf("READ_ISSUES", "WRITE_ISSUES"),
+            homepage = "https://linear.app"
+        ),
+        MarketplaceItem(
+            id = "jira",
+            name = "Jira",
+            description = "Track bugs, tasks and agile boards in Jira",
+            iconEmoji = "🔷",
+            iconColor = 0xFF0052CC,
+            authType = MarketplaceAuthType.CREDENTIALS,
+            authPrompt = "Jira Site URL, Email & API Token",
+            authHelpUrl = "https://id.atlassian.com/manage-profile/security/api-tokens",
+            category = "project",
+            isPopular = true,
+            developer = "Atlassian",
+            tags = listOf("agile", "bugs", "boards"),
+            requiredPermissions = listOf("READ_ISSUES", "WRITE_ISSUES"),
+            homepage = "https://www.atlassian.com/software/jira"
+        ),
+        MarketplaceItem(
+            id = "figma",
+            name = "Figma",
+            description = "Browse, inspect and export Figma designs",
+            iconEmoji = "🎨",
+            iconColor = 0xFFF24E1E,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Figma Personal Access Token",
+            authHelpUrl = "https://www.figma.com/settings",
+            category = "design",
+            isPopular = true,
+            iconUrl = "https://static.figma.com/app/icon/1/icon-192.png",
+            developer = "Figma",
+            tags = listOf("design", "ui", "prototyping"),
+            requiredPermissions = listOf("READ_FILES"),
+            homepage = "https://figma.com"
+        ),
+        MarketplaceItem(
+            id = "spotify",
+            name = "Spotify",
+            description = "Control playback, search tracks and manage playlists",
+            iconEmoji = "🎵",
+            iconColor = 0xFF1DB954,
+            authType = MarketplaceAuthType.OAUTH,
+            authPrompt = "Connect your Spotify account via OAuth",
+            authHelpUrl = "https://developer.spotify.com/dashboard",
+            category = "music",
+            isPopular = true,
+            developer = "Spotify AB",
+            tags = listOf("music", "streaming", "playlists"),
+            requiredPermissions = listOf("PLAYBACK_CONTROL", "READ_LIBRARY"),
+            homepage = "https://spotify.com"
+        ),
+        MarketplaceItem(
+            id = "aws_s3",
+            name = "AWS S3",
+            description = "Browse, upload and manage S3 buckets and objects",
+            iconEmoji = "☁️",
+            iconColor = 0xFFFF9900,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "AWS Access Key ID & Secret Access Key",
+            authHelpUrl = "https://aws.amazon.com/iam/",
+            category = "cloud",
+            isPopular = true,
+            developer = "Amazon Web Services",
+            tags = listOf("cloud", "storage", "aws"),
+            requiredPermissions = listOf("S3_READ", "S3_WRITE"),
+            homepage = "https://aws.amazon.com/s3/"
         )
     )
 
@@ -103,19 +248,27 @@ object MarketplaceRepository {
             authPrompt = "Apple ID & App-Specific Password",
             authHelpUrl = "https://appleid.apple.com",
             category = "mail",
-            isNew = true
+            isNew = true,
+            developer = "Apple Inc.",
+            tags = listOf("email", "apple", "icloud"),
+            requiredPermissions = listOf("READ_EMAIL", "SEND_EMAIL"),
+            homepage = "https://www.icloud.com/mail"
         ),
         MarketplaceItem(
             id = "canva",
             name = "Canva",
             description = "Generate designs, presentations and graphics",
-            iconEmoji = "🎨",
+            iconEmoji = "🖼️",
             iconColor = 0xFF00C4CC,
             authType = MarketplaceAuthType.API_KEY,
             authPrompt = "Canva Connect API Key",
             authHelpUrl = "https://www.canva.com/developers/",
             category = "design",
-            isNew = true
+            isNew = true,
+            developer = "Canva",
+            tags = listOf("design", "graphics", "presentations"),
+            requiredPermissions = listOf("READ_DESIGNS", "WRITE_DESIGNS"),
+            homepage = "https://canva.com"
         ),
         MarketplaceItem(
             id = "brave_search",
@@ -127,7 +280,11 @@ object MarketplaceRepository {
             authPrompt = "Brave Search API Key",
             authHelpUrl = "https://brave.com/search/api/",
             category = "research",
-            isNew = true
+            isNew = true,
+            developer = "Brave Software",
+            tags = listOf("search", "web", "research"),
+            requiredPermissions = listOf("INTERNET"),
+            homepage = "https://search.brave.com"
         ),
         MarketplaceItem(
             id = "sqlite_mcp",
@@ -137,7 +294,128 @@ object MarketplaceRepository {
             iconColor = 0xFF003B57,
             authType = MarketplaceAuthType.NONE,
             category = "data",
-            isNew = true
+            isNew = true,
+            developer = "Antigem",
+            tags = listOf("database", "sql", "local"),
+            requiredPermissions = listOf("READ_STORAGE", "WRITE_STORAGE")
+        ),
+        MarketplaceItem(
+            id = "vercel",
+            name = "Vercel",
+            description = "Deploy, manage and inspect Vercel projects and deployments",
+            iconEmoji = "▲",
+            iconColor = 0xFF000000,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Vercel API Token",
+            authHelpUrl = "https://vercel.com/account/tokens",
+            category = "dev",
+            isNew = true,
+            iconUrl = "https://assets.vercel.com/image/upload/front/favicon/vercel/favicon.ico",
+            developer = "Vercel",
+            tags = listOf("deploy", "hosting", "frontend"),
+            requiredPermissions = listOf("READ_PROJECTS", "WRITE_PROJECTS"),
+            homepage = "https://vercel.com"
+        ),
+        MarketplaceItem(
+            id = "stripe",
+            name = "Stripe",
+            description = "Manage payments, subscriptions and customers",
+            iconEmoji = "💳",
+            iconColor = 0xFF635BFF,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Stripe Secret Key (sk_live_... or sk_test_...)",
+            authHelpUrl = "https://dashboard.stripe.com/apikeys",
+            category = "finance",
+            isNew = true,
+            iconUrl = "https://stripe.com/img/v3/home/twitter.png",
+            developer = "Stripe",
+            tags = listOf("payments", "billing", "subscriptions"),
+            requiredPermissions = listOf("READ_PAYMENTS", "WRITE_PAYMENTS"),
+            homepage = "https://stripe.com"
+        ),
+        MarketplaceItem(
+            id = "twilio",
+            name = "Twilio",
+            description = "Send SMS, make calls and manage phone numbers",
+            iconEmoji = "📱",
+            iconColor = 0xFFF22F46,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Twilio Account SID & Auth Token",
+            authHelpUrl = "https://www.twilio.com/console",
+            category = "communication",
+            isNew = true,
+            developer = "Twilio",
+            tags = listOf("sms", "calls", "messaging"),
+            requiredPermissions = listOf("SEND_SMS", "MAKE_CALLS"),
+            homepage = "https://twilio.com"
+        ),
+        MarketplaceItem(
+            id = "openai_plugin",
+            name = "OpenAI",
+            description = "Access GPT models, DALL·E, Whisper and more",
+            iconEmoji = "🤖",
+            iconColor = 0xFF10A37F,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "OpenAI API Key (sk-...)",
+            authHelpUrl = "https://platform.openai.com/api-keys",
+            category = "ai",
+            isNew = true,
+            iconUrl = "https://openai.com/favicon.ico",
+            developer = "OpenAI",
+            tags = listOf("ai", "gpt", "image-gen", "whisper"),
+            requiredPermissions = listOf("INTERNET"),
+            homepage = "https://platform.openai.com"
+        ),
+        MarketplaceItem(
+            id = "huggingface",
+            name = "Hugging Face",
+            description = "Run inference on thousands of open-source AI models",
+            iconEmoji = "🤗",
+            iconColor = 0xFFFFD21E,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Hugging Face User Access Token",
+            authHelpUrl = "https://huggingface.co/settings/tokens",
+            category = "ai",
+            isNew = true,
+            iconUrl = "https://huggingface.co/favicon.ico",
+            developer = "Hugging Face",
+            tags = listOf("ai", "models", "inference", "open-source"),
+            requiredPermissions = listOf("INTERNET"),
+            homepage = "https://huggingface.co"
+        ),
+        MarketplaceItem(
+            id = "supabase",
+            name = "Supabase",
+            description = "Query your Supabase database, storage and auth",
+            iconEmoji = "⚡",
+            iconColor = 0xFF3ECF8E,
+            authType = MarketplaceAuthType.API_KEY,
+            authPrompt = "Supabase Project URL & Anon/Service Key",
+            authHelpUrl = "https://supabase.com/dashboard/project/_/settings/api",
+            category = "data",
+            isNew = true,
+            iconUrl = "https://supabase.com/favicon/favicon-32x32.png",
+            developer = "Supabase",
+            tags = listOf("database", "backend", "postgres"),
+            requiredPermissions = listOf("INTERNET"),
+            homepage = "https://supabase.com"
+        ),
+        MarketplaceItem(
+            id = "firebase",
+            name = "Firebase",
+            description = "Access Firestore, Auth, Storage and Realtime Database",
+            iconEmoji = "🔥",
+            iconColor = 0xFFFFA000,
+            authType = MarketplaceAuthType.CREDENTIALS,
+            authPrompt = "Firebase Service Account JSON",
+            authHelpUrl = "https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk",
+            category = "data",
+            isNew = true,
+            iconUrl = "https://firebase.google.com/static/images/brand-guidelines/logo-logomark_192.png",
+            developer = "Google",
+            tags = listOf("database", "auth", "cloud", "google"),
+            requiredPermissions = listOf("INTERNET"),
+            homepage = "https://firebase.google.com"
         )
     )
 

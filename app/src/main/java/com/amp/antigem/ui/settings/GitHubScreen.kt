@@ -59,6 +59,7 @@ fun GitHubScreen(cardBg: Color, cardBorder: BorderStroke, onOpenProject: (Projec
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         GitHubStatusCard(state, cardBg, cardBorder)
+        GitHubOAuthScreen(cardBg, cardBorder)
 
         state.message?.let { msg ->
             Surface(

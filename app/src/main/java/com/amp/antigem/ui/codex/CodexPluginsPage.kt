@@ -32,6 +32,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -188,9 +189,32 @@ fun CodexPluginsPage(backend: CodexChatBackend) {
         if (d == null) {
             Column(Modifier.padding(16.dp)) {
                 if (error != null) {
-                    Text(error!!, fontSize = 12.5.sp, color = MaterialTheme.colorScheme.error)
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedButton(onClick = { scope.launch { reload() } }, enabled = !loading) { Text("Try again") }
+                    val isNotFound = error!!.contains("not found", ignoreCase = true) || error!!.contains("not installed", ignoreCase = true)
+                    Text(
+                        if (isNotFound) "Codex CLI is not installed or not running yet." else error!!,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedButton(onClick = { scope.launch { reload() } }, enabled = !loading) { Text("Try again") }
+                        if (isNotFound) {
+                            val cliJob by backend.cliJob.collectAsState()
+                            Button(
+                                onClick = { backend.startCliJob("install") },
+                                enabled = cliJob?.running != true,
+                                colors = ButtonDefaults.buttonColors(containerColor = CodexAccent)
+                            ) {
+                                if (cliJob?.running == true) {
+                                    CircularProgressIndicator(Modifier.size(16.dp), color = Color.White, strokeWidth = 2.dp)
+                                    Spacer(Modifier.width(6.dp))
+                                    Text("Installing…")
+                                } else {
+                                    Text("Install Codex CLI")
+                                }
+                            }
+                        }
+                    }
                 } else Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = CodexAccent)
                     Spacer(Modifier.width(8.dp))

@@ -204,10 +204,25 @@ fun ProvidersPage(deps: ClaudeSettingsDeps) {
     }
 
     // quick start
-    Text("Add a provider", fontWeight = FontWeight.SemiBold, fontSize = 12.5.sp)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Add a provider", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+        Button(
+            onClick = { editing = ClaudeProvider(name = "Custom Provider") },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED)),
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Icon(Icons.Outlined.Add, null, Modifier.size(16.dp))
+            Spacer(Modifier.width(6.dp))
+            Text("+ Add Custom Provider", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        }
+    }
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        PRESETS.filter { it.label != "OpenRouter" || providers.none { p -> p.openrouter } }.forEach { preset ->
-            OutlinedButton(onClick = { editing = preset.provider }) { Text(if (preset.label == "Custom") "+ Custom" else "+ ${preset.label}") }
+        PRESETS.filter { it.label != "Custom" && (it.label != "OpenRouter" || providers.none { p -> p.openrouter }) }.forEach { preset ->
+            OutlinedButton(onClick = { editing = preset.provider }) { Text("+ ${preset.label}") }
         }
     }
 

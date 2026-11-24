@@ -45,6 +45,8 @@ class AntiGemApplication : Application(), coil.ImageLoaderFactory {
         com.amp.antigem.crash.CrashHandler.install(this)
         // the crash screen's own process needs none of the startup below
         if (com.amp.antigem.crash.CrashHandler.isCrashProcess(this)) return
+        com.amp.antigem.data.local.GitHubAuthConfig.init(this)
+        com.amp.antigem.data.provider.ProviderManager.initialise(this)
         // loads the saved server addresses, Remote mode and the SSH key into memory before anything connects
         com.amp.antigem.data.preferences.AuthPreferences(this)
         // the chosen light / dark themes and the custom ones, before the first screen draws

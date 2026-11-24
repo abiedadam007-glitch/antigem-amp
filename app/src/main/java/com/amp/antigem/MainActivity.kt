@@ -92,6 +92,7 @@ class MainActivity : ComponentActivity() {
         handleIncomingFileIntent(intent)
         handleJarvisIntent(intent)
         handleVoiceCallIntent(intent)
+        handleOAuthIntent(intent)
         // Voice call tile / shortcut: the floating call window stays away while this screen is up; the long-press menu
         // of the app icon gets "Voice call"
         lifecycle.addObserver(androidx.lifecycle.LifecycleEventObserver { _, event ->
@@ -732,6 +733,7 @@ class MainActivity : ComponentActivity() {
         handleIncomingFileIntent(intent)
         handleJarvisIntent(intent)
         handleVoiceCallIntent(intent)
+        handleOAuthIntent(intent)
     }
 
     /**
@@ -765,6 +767,16 @@ class MainActivity : ComponentActivity() {
         if (intent?.getBooleanExtra(com.amp.antigem.data.voice.VoiceCallLauncher.EXTRA_START_CALL, false) != true) return
         intent.removeExtra(com.amp.antigem.data.voice.VoiceCallLauncher.EXTRA_START_CALL)
         com.amp.antigem.data.voice.VoiceCallLauncher.requestStart()
+    }
+
+    /** GitHub App OAuth and external provider OAuth redirection callbacks. */
+    private fun handleOAuthIntent(intent: Intent?) {
+        val data = intent?.data ?: return
+        if (data.scheme == "antigem" && data.host == "oauth") {
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                com.amp.antigem.data.github.GitHubOAuthManager.handleCallback(data)
+            }
+        }
     }
 
     /**

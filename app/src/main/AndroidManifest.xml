@@ -86,6 +86,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
+            <!-- OAuth callback for antigem://oauth/callback -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="antigem" android:host="oauth" android:path="/callback" />
+            </intent-filter>
+
             <!-- Open / View .antigem and trajectory chat files -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
