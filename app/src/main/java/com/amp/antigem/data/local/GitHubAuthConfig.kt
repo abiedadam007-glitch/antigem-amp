@@ -1,6 +1,7 @@
 package com.amp.antigem.data.local
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
@@ -17,7 +18,7 @@ object GitHubAuthConfig {
     private const val KEY_CLIENT_SECRET = "client_secret"
     private const val KEY_ACCESS_TOKEN = "access_token"
 
-    private lateinit var encryptedPrefs: EncryptedSharedPreferences
+    private lateinit var encryptedPrefs: SharedPreferences
 
     /**
      * Initialise the encrypted preferences. Must be called once, e.g. from Application.onCreate().

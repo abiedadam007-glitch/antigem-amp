@@ -58,6 +58,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -166,8 +168,8 @@ fun HarnessSettingsScreen(
             try {
                 // POST /api/harness/install or /api/harness/update
                 // The bridge triggers an async job; we poll status for progress
-                val params = kotlinx.serialization.json.buildJsonObject {
-                    kotlinx.serialization.json.put("kind", kind)
+                val params = buildJsonObject {
+                    put("kind", kind)
                 }
                 client.rpc("job.start", params)
                 // poll until done

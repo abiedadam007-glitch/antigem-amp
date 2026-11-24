@@ -164,7 +164,7 @@ fun CustomProvidersListScreen(
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
                         Icons.Outlined.Dns,

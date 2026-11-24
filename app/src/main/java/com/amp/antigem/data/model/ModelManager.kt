@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import com.amp.antigem.data.provider.ModelInfo
 
 /**
  * Central manager that aggregates model information from all registered providers.
@@ -175,15 +176,3 @@ object ModelManager {
         return list
     }
 }
-
-/**
- * Simple data class describing a model. This mirrors the definition used in ProviderManager.
- */
-data class ModelInfo(
-    val providerId: String,
-    val modelId: String,
-    val name: String,
-    val description: String? = null,
-    val maxTokens: Int? = null,
-    val capabilities: Set<String> = emptySet()
-)
