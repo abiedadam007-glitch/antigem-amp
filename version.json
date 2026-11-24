@@ -1,22 +1,14 @@
 {
-  "version_code": 137,
-  "version_name": "2.0.4",
+  "version_code": 138,
+  "version_name": "2.1.0",
   "min_supported_version_code": 2,
   "changelog": [
-    "Added Shizuku and root next to ADB: choose how agents reach your phone in Settings → ADB Connect. Agents use adb, Shizuku (rish) or root only when you ask",
-    "ADB Connect now reconnects a paired phone by itself when you open it or tap refresh",
-    "Fixed Antigravity sign-in: when your Google account isn't allowed, the app now shows why instead of waiting forever",
-    "Fixed OpenCode custom providers whose models didn't show up in the model list or in chat (newer OpenCode versions)",
-    "Redesigned OpenCode's custom provider editor: full screen, fast with hundreds of models, with search, filters and select all",
-    "Added Images, Reasoning and Tools switches for each model of an OpenCode custom provider; \"Fetch from endpoint\" fills them in from the endpoint, Ollama or models.dev",
-    "Added Effort and Thinking controls to OpenCode chats for models that support them, and a warning when you attach an image to a model that can't read images",
-    "Added a \"Fold after\" option for grouped agent steps: how many steps fold into one pill (2 by default)",
-    "Agent memory is now on by default; saving chats for agents to look up is now off by default",
-    "Added Settings → Updates: get beta updates, and choose how often AntiGem checks for updates in the background",
-    "Fixed the app not starting on Android 7 and 8",
-    "Back on the main chat screen now moves AntiGem to the background instead of closing it",
-    "Fixed a crash on the Claude Code and Codex Plugins pages when the same plugin was installed more than once",
-    "Added a Discord community link in Settings → About"
+    "GitHub App OAuth: Connect directly with GitHub App (OAuth flow with custom callback scheme antigem://oauth/callback, automatic token exchange, user profile display)",
+    "DeepSeek Harness: Full integration with DeepSeek V3, R1, and Coder models via ACP (Agent Client Protocol), including model picker, API key config, profile selector, and connection test",
+    "Unified AI Providers & Custom Providers: Add any OpenAI or Anthropic compatible endpoint with built-in presets for Kimi, OpenRouter, DeepSeek, and Z.ai",
+    "Overhauled Marketplace: Redesigned with category filters, rich plugin cards, detail sheets, and 15+ real plugins (Slack, Notion, Linear, Jira, Figma, Stripe, OpenAI, etc.)",
+    "Enhanced Codex & Claude integration with automatic CLI detection and custom provider shortcut",
+    "Cleaned up UI architecture and optimized memory footprint"
   ],
   "is_critical": false,
   "beta": {
