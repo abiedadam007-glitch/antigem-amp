@@ -215,8 +215,8 @@
             android:permission="${applicationId}.permission.RUN_COMMAND"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
-                <action android:name="com.amp.antigem.app.TermuxUrlOpenActivity" />
-                <action android:name="com.amp.antigem.app.TermuxOpenActivity" />
+                <action android:name="${applicationId}.app.TermuxUrlOpenActivity" />
+                <action android:name="${applicationId}.app.TermuxOpenActivity" />
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -229,8 +229,8 @@
             android:exported="true"
             android:permission="${applicationId}.permission.RUN_COMMAND">
             <intent-filter>
-                <action android:name="com.amp.antigem.app.request_storage_permissions" />
-                <action android:name="com.amp.antigem.app.reload_style" />
+                <action android:name="${applicationId}.app.request_storage_permissions" />
+                <action android:name="${applicationId}.app.reload_style" />
             </intent-filter>
         </receiver>
 
@@ -240,7 +240,7 @@
             android:exported="true"
             android:permission="${applicationId}.permission.RUN_COMMAND">
             <intent-filter>
-                <action android:name="com.amp.antigem.app.TermuxOpenReceiver" />
+                <action android:name="${applicationId}.app.TermuxOpenReceiver" />
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -253,8 +253,8 @@
             android:exported="true"
             android:permission="${applicationId}.permission.API">
             <intent-filter>
-                <action android:name="com.amp.antigem.api.ACTION_API" />
-                <action android:name="com.amp.antigem.api" />
+                <action android:name="${applicationId}.api.ACTION_API" />
+                <action android:name="${applicationId}.api" />
             </intent-filter>
         </receiver>
 
@@ -269,9 +269,9 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Background terminal and AI language server execution" />
             <intent-filter>
-                <action android:name="com.amp.antigem.service_wake_lock" />
-                <action android:name="com.amp.antigem.service_wake_unlock" />
-                <action android:name="com.amp.antigem.service_stop" />
+                <action android:name="${applicationId}.service_wake_lock" />
+                <action android:name="${applicationId}.service_wake_unlock" />
+                <action android:name="${applicationId}.service_stop" />
             </intent-filter>
         </service>
 

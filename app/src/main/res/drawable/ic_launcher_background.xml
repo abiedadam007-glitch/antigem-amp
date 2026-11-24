@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- AntiGem "Prism" icon background: graphite, lit softly from the top -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
@@ -11,10 +10,10 @@
             <gradient
                 android:type="radial"
                 android:centerX="54"
-                android:centerY="30"
-                android:gradientRadius="80"
-                android:startColor="#FF252832"
-                android:endColor="#FF07080B" />
+                android:centerY="42"
+                android:gradientRadius="72"
+                android:startColor="#FF151828"
+                android:endColor="#FF080910" />
         </aapt:attr>
     </path>
 </vector>

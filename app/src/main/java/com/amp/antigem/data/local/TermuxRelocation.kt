@@ -24,12 +24,13 @@ object TermuxRelocation {
 
     private const val TAG = "TermuxRelocation"
     const val TERMUX_PACKAGE = "com.termux"
+    const val LEGACY_ROOTFS_PACKAGE = "ai.antigem"
 
     /**
-     * The release app's package name. A rootfs or backup made by it holds /data/data/com.amp.antigem paths instead of
+     * The release app's package name. A rootfs or backup made by it holds /data/data/com.amp.ai paths instead of
      * com.termux ones; a debug install (ai.antidev) rewrites those paths too ([relocateTree] with releasePaths).
      */
-    private const val RELEASE_PACKAGE = "com.amp.antigem"
+    private const val RELEASE_PACKAGE = "com.amp.ai"
 
     /** Zip-based files keep CRCs and dex files a checksum: rewriting bytes in them would corrupt them, so they are skipped. */
     private val SKIPPED_EXTENSIONS = setOf("apk", "jar", "zip", "aar", "whl", "dex", "jmod")
@@ -77,7 +78,10 @@ object TermuxRelocation {
         val old = TERMUX_PACKAGE.toByteArray(Charsets.US_ASCII)
         val new = newPackage.toByteArray(Charsets.US_ASCII)
         require(old.size == new.size) { "$newPackage must have the length of $TERMUX_PACKAGE" }
-        val release = if (releasePaths && newPackage != RELEASE_PACKAGE) RELEASE_PACKAGE.toByteArray(Charsets.US_ASCII) else null
+        val release = if (releasePaths) {
+            if (newPackage != RELEASE_PACKAGE) RELEASE_PACKAGE.toByteArray(Charsets.US_ASCII)
+            else LEGACY_ROOTFS_PACKAGE.toByteArray(Charsets.US_ASCII)
+        } else null
         val stats = Stats()
         if (!root.exists()) return stats
         val dirs = ArrayDeque<File>().apply { add(root) }
@@ -104,7 +108,7 @@ object TermuxRelocation {
 
     private fun relink(link: File, newPackage: String, pathsOnly: Boolean, releasePaths: Boolean): Boolean {
         val target = try { Os.readlink(link.absolutePath) } catch (_: Exception) { return false }
-        if (!target.contains(TERMUX_PACKAGE) && !(releasePaths && target.contains(RELEASE_PACKAGE))) return false
+        if (!target.contains(TERMUX_PACKAGE) && !(releasePaths && (target.contains(RELEASE_PACKAGE) || target.contains(LEGACY_ROOTFS_PACKAGE)))) return false
         val newTarget = String(rewrite(target.toByteArray(Charsets.UTF_8), newPackage, pathsOnly, releasePaths), Charsets.UTF_8)
         if (newTarget == target) return false
         return try {
@@ -150,7 +154,10 @@ object TermuxRelocation {
     internal fun rewrite(bytes: ByteArray, newPackage: String, pathsOnly: Boolean = false, releasePaths: Boolean = false): ByteArray {
         val old = TERMUX_PACKAGE.toByteArray(Charsets.US_ASCII)
         val new = newPackage.toByteArray(Charsets.US_ASCII)
-        val release = if (releasePaths && newPackage != RELEASE_PACKAGE) RELEASE_PACKAGE.toByteArray(Charsets.US_ASCII) else null
+        val release = if (releasePaths) {
+            if (newPackage != RELEASE_PACKAGE) RELEASE_PACKAGE.toByteArray(Charsets.US_ASCII)
+            else LEGACY_ROOTFS_PACKAGE.toByteArray(Charsets.US_ASCII)
+        } else null
         val out = bytes.copyOf()
         var i = 0
         while (i <= out.size - old.size) {

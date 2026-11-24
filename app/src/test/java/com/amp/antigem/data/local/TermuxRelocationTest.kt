@@ -49,16 +49,16 @@ class TermuxRelocationTest {
             "-n com.termux/com.termux.app.TermuxOpenReceiver\n" +
             "app_process / com.termux.x11.Loader; am broadcast -a com.termux.x11.CHANGE_PREFERENCE -p com.termux.x11\n"
         val bytes = text.toByteArray()
-        val full = String(TermuxRelocation.rewrite(bytes, "com.amp.antigem"))
+        val full = String(TermuxRelocation.rewrite(bytes, "com.amp.ai"))
         assertEquals(
-            "#!/data/data/com.amp.antigem/files/usr/bin/sh\nexec app_process / com.termux.termuxam.Am\n" +
-                "-n com.amp.antigem/com.amp.antigem.app.TermuxOpenReceiver\n" +
-                "app_process / com.termux.x11.Loader; am broadcast -a com.termux.x11.CHANGE_PREFERENCE -p com.amp.antigem.x11\n",
+            "#!/data/data/com.amp.ai/files/usr/bin/sh\nexec app_process / com.termux.termuxam.Am\n" +
+                "-n com.amp.ai/com.amp.antigem.app.TermuxOpenReceiver\n" +
+                "app_process / com.termux.x11.Loader; am broadcast -a com.termux.x11.CHANGE_PREFERENCE -p com.amp.ai.x11\n",
             full
         )
-        val paths = String(TermuxRelocation.rewrite(bytes, "com.amp.antigem", pathsOnly = true))
+        val paths = String(TermuxRelocation.rewrite(bytes, "com.amp.ai", pathsOnly = true))
         assertEquals(
-            "#!/data/data/com.amp.antigem/files/usr/bin/sh\nexec app_process / com.termux.termuxam.Am\n" +
+            "#!/data/data/com.amp.ai/files/usr/bin/sh\nexec app_process / com.termux.termuxam.Am\n" +
                 "-n com.termux/com.amp.antigem.app.TermuxOpenReceiver\n" +
                 "app_process / com.termux.x11.Loader; am broadcast -a com.termux.x11.CHANGE_PREFERENCE -p com.termux.x11\n",
             paths
@@ -91,7 +91,7 @@ class TermuxRelocationTest {
     /** The scripts written into the Linux system (apt hook, dpkg wrapper) must be valid shell; copies land in build/. */
     @Test
     fun generatedScriptsAreValidShell() {
-        val prefix = "/data/data/com.amp.antigem/files/usr"
+        val prefix = "/data/data/com.amp.ai/files/usr"
         val relocator = "$prefix/libexec/antigem/relocate-debs"
         val out = File("build/generated-test-scripts").apply { mkdirs() }
         val scripts = mapOf(

@@ -2034,6 +2034,7 @@ export PREFIX="${prefixDir.absolutePath}"
 export HOME="${homeDir.absolutePath}"
 export PATH="${homeDir.absolutePath}/.local/bin:${binDir.absolutePath}:${binDir.absolutePath}/applets:/system/bin:/system/xbin"
 export TMPDIR="${prefixDir.absolutePath}/tmp"
+export LD_LIBRARY_PATH="${prefixDir.absolutePath}/lib"
 export TERM="xterm-256color"
 export COLORTERM="truecolor"
 export TERMUX_VERSION="0.118.0"
@@ -2088,6 +2089,7 @@ fi
 export HOME="${homeDir.absolutePath}"
 export PATH="${homeDir.absolutePath}/.local/bin:${binDir.absolutePath}:${binDir.absolutePath}/applets:/system/bin:/system/xbin"
 export TMPDIR="${prefixDir.absolutePath}/tmp"
+export LD_LIBRARY_PATH="${prefixDir.absolutePath}/lib"
 export TERM="xterm-256color"
 export COLORTERM="truecolor"
 export TERMUX_VERSION="0.118.0"
@@ -2216,6 +2218,7 @@ All files created here persist inside the application.
             env["HOME"] = home.absolutePath
             env["PATH"] = "${home.absolutePath}/.local/bin:${bin.absolutePath}:${bin.absolutePath}/applets:/system/bin:/system/xbin"
             env["TMPDIR"] = tmp.absolutePath
+            env["LD_LIBRARY_PATH"] = lib.absolutePath
             env["TERM"] = "xterm-256color"
             env["COLORTERM"] = "truecolor"
             env["TERMUX_VERSION"] = "0.118.0"
@@ -2404,6 +2407,7 @@ All files created here persist inside the application.
         env["PREFIX"] = prefixDir.absolutePath
         env["HOME"] = homeDir.absolutePath
         env["TMPDIR"] = tmpDir.absolutePath
+        env["LD_LIBRARY_PATH"] = "${prefixDir.absolutePath}/lib"
         env["PATH"] = "${homeDir.absolutePath}/.local/bin:${binDir.absolutePath}:${prefixDir.absolutePath}/bin:/system/bin:/system/xbin"
         env["TERM"] = "xterm-256color"
         env["COLORTERM"] = "truecolor"
@@ -2462,6 +2466,7 @@ All files created here persist inside the application.
         env["PREFIX"] = prefixDir.absolutePath
         env["HOME"] = homeDir.absolutePath
         env["TMPDIR"] = tmpDir.absolutePath
+        env["LD_LIBRARY_PATH"] = "${prefixDir.absolutePath}/lib"
         env["PATH"] = "${homeDir.absolutePath}/.local/bin:${binDir.absolutePath}:${prefixDir.absolutePath}/bin:/system/bin:/system/xbin"
         env["DEBIAN_FRONTEND"] = "noninteractive"
         env["TERM"] = "xterm-256color"

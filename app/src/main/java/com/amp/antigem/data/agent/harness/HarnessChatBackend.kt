@@ -62,7 +62,7 @@ class HarnessChatBackend(
             title = "DeepSeek Harness",
             sessionId = id,
             agent = AgentKind.HARNESS,
-            workspaceUri = "file:///data/user/0/com.amp.antigem/files/home/projects"
+            workspaceUri = "file:///data/user/0/com.amp.ai/files/home/projects"
         )
         transcript.clear()
         transcript.sessionId = id

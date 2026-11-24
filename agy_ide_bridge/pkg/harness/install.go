@@ -53,7 +53,7 @@ func (m *Manager) resolveBinary() (string, error) {
 		filepath.Join(m.HomeDir, ".local", "bin", "dsh"),
 		filepath.Join(m.HomeDir, ".npm-global", "bin", "dsh"),
 		"/data/user/0/ai.antigem/files/usr/bin/dsh",
-		"/data/user/0/com.amp.antigem/files/usr/bin/dsh",
+		"/data/user/0/com.amp.ai/files/usr/bin/dsh",
 	}
 
 	for _, c := range candidates {

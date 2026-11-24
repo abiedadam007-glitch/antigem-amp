@@ -21,7 +21,7 @@ import java.util.Properties
 
 /** PATH for SSH sessions; also finds the tools of AntiGem or Termux when the host is an Android phone. */
 const val UNIVERSAL_SSH_PATH =
-    "export PATH=\"\$HOME/.local/bin:\$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/data/data/com.amp.antigem/files/usr/bin:/data/data/com.termux/files/usr/bin:\$PATH\"; "
+    "export PATH=\"\$HOME/.local/bin:\$HOME/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/data/data/com.amp.ai/files/usr/bin:/data/data/com.termux/files/usr/bin:\$PATH\"; "
 
 data class TmuxWindowInfo(
     val index: Int,
@@ -230,6 +230,7 @@ class LocalPtySession(
                 envMap["HOME"] = home.absolutePath
                 envMap["PATH"] = "${home.absolutePath}/.local/bin:${bin.absolutePath}:${bin.absolutePath}/applets:/system/bin:/system/xbin"
                 envMap["TMPDIR"] = tmp.absolutePath
+                envMap["LD_LIBRARY_PATH"] = lib.absolutePath
                 envMap["TERM"] = "xterm-256color"
                 envMap["COLORTERM"] = "truecolor"
                 envMap["TERMUX_VERSION"] = "0.118.0"
